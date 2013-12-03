@@ -24,6 +24,10 @@
                 beginEvent: 'updateBeforeRender',
                 endEvent: 'updateAfterRender',
                 description: 'IterationBurnDownMinimalApp - chart rendering time'
+            },
+            {
+                method: '_cfdSwapButtonClicked',
+                description: 'IterationBurnDownMinimalApp - user switched view'
             }
         ],
 
@@ -67,6 +71,7 @@
                 // NOTE: the item being added below will be replaced by the pictofonts described in S57444
                 this.add({
                     xtype: 'rallybutton',
+                    suppressClientMetrics: true, /* we don't want the default metrics */
                     text: 'Cumulative Flow',
                     cls: 'primary small',
                     itemId: 'cfdSwapButton',
