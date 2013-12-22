@@ -91,9 +91,8 @@ describe 'Rally.apps.iterationplanningboard.IterationPlanningBoardBacklogColumn'
     @createColumn()
     refreshStub = @stub(@column, 'refresh')
 
-    @enterSearchText(searchText).then =>
-      @click(className: 'search-button').then =>
-        @assertSearch(refreshStub, searchText)
+    @search(searchText).then =>
+      @assertSearch(refreshStub, searchText)
 
   it 'should clear search filter on enter in empty search box', ->
     @createColumn()
@@ -103,6 +102,14 @@ describe 'Rally.apps.iterationplanningboard.IterationPlanningBoardBacklogColumn'
       expect(refreshStub).toHaveBeenCalledOnce()
       refreshConfig = refreshStub.getCall(0).args[0]
       expect(refreshConfig.storeConfig.search).toBe ""
+
+  it 'searching multiple times should not create duplicate filters', ->
+    @createColumn()
+    @column.filterCollection = Ext.create('Rally.data.filter.FilterCollection')
+
+    @search().then =>
+      @search().then =>
+        expect(@column.filterCollection.toString()).toBe '((Iteration = null) AND (DirectChildrenCount = 0))'
 
   helpers
     createColumn: (options={}) ->
@@ -147,5 +154,9 @@ describe 'Rally.apps.iterationplanningboard.IterationPlanningBoardBacklogColumn'
 
       expect(refreshConfig.storeConfig.search).not.toBeNull()
       expect(refreshConfig.storeConfig.search).toEqual searchText
+
+    search: (searchText) ->
+      @enterSearchText(searchText).then =>
+        @click(className: 'search-button')
 
 
