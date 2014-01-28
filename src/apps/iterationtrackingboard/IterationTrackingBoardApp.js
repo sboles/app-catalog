@@ -31,7 +31,8 @@
             'Rally.ui.filter.view.TagPillFilter',
             'Rally.app.Message',
             'Rally.apps.iterationtrackingboard.Column',
-            'Rally.clientmetrics.ClientMetricsRecordable'
+            'Rally.clientmetrics.ClientMetricsRecordable',
+            'Rally.ui.grid.plugin.RealtimeUpdateListener'
         ],
         mixins: [
             'Rally.app.CardFieldSelectable',
@@ -121,6 +122,14 @@
                 boardFieldDefaults: (this.getSetting('cardFields') && this.getSetting('cardFields').split(',')) ||
                     ['Parent', 'Tasks', 'Defects', 'Discussion', 'PlanEstimate']
             });
+
+            if (true) {
+                plugins = ['rallyrealtimeupdatelistener'];
+                gridConfig.plugins = gridConfig.plugins ? gridConfig.plugins.concat(plugins) : plugins;
+                gridConfig.realtimeFilterFn = this._filterRealtimeUpdate;
+
+                columnPlugins = columnPlugins.concat(plugins);
+            }
 
             if (context.isFeatureEnabled('SHOW_ARTIFACT_CHOOSER_ON_ITERATION_BOARDS') && !context.isFeatureEnabled('BETA_TRACKING_EXPERIENCE')) {
                 plugins.push({
@@ -367,6 +376,10 @@
 
         _publishContentUpdatedNoDashboardLayout: function() {
             this.fireEvent('contentupdated', {dashboardLayout: false});
+        },
+
+        _filterRealtimeUpdate: function(records, changes) {
+            return true;
         }
     });
 })();
