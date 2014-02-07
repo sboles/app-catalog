@@ -191,16 +191,23 @@
                 Ext.apply(gridConfig, {
                     xtype: 'rallytreegrid',
                     model: treeGridModel,
+                    parentFieldNames: {
+                        defect: ['Requirement', 'DefectSuite'],
+                        task: ['WorkProduct']
+                    },
                     storeConfig: {
                         nodeParam: 'Parent',
-                        parentFieldNames: ['Requirement', 'WorkProduct', 'DefectSuite'],
+                        // parentFieldNames: ['Requirement', 'WorkProduct', 'DefectSuite'],
                         parentTypes: ['HierarchicalRequirement', 'Defect', 'DefectSuite', 'TestSet'],
                         childTypes: ['Defect', 'Task', 'TestCase'],
                         rootNodeFilters: this.context.getTimeboxScope().getQueryFilter(),
-                        sorters: {
+                        sorters: [{
                             property: Rally.data.Ranker.getRankField(treeGridModel),
                             direction: 'ASC'
-                        },
+                        },{
+                            property: 'TaskIndex',
+                            direction: 'ASC'
+                        }],
                         fetch: ['FormattedID', 'Tasks', 'Defects', 'TestCases']
                     },
                     treeColumnRenderer: function(value, metaData, record, rowIdx, colIdx, store, view) {
