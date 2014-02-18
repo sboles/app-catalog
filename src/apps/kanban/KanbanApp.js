@@ -52,7 +52,7 @@
             this.setLoading();
 
             var log = "log";
-            console[log]("change 1_2");
+            console[log]("change 1_3");
 
             Rally.data.ModelFactory.getModel({
                 type: 'UserStory',
