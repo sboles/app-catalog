@@ -51,6 +51,8 @@
         launch: function() {
             this.setLoading();
 
+            console.log("App-catalog change");
+
             Rally.data.ModelFactory.getModel({
                 type: 'UserStory',
                 success: this._onStoryModelRetrieved,
