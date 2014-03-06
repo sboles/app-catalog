@@ -244,7 +244,8 @@
                     showIconMenus: true,
                     fields: (this._shouldShowColumnLevelFieldPicker()) ? [] : this.getSetting('cardFields').split(','),
                     showAge: this.getSetting('showCardAge') ? this.getSetting('cardAgeThreshold') : -1,
-                    showBlockedReason: true
+                    showBlockedReason: true,
+                    shouldUseRankHelperFilters: true
                 },
                 loadMask: false,
                 storeConfig: {

@@ -168,7 +168,8 @@
                     cardConfig: {
                         fields: this.getCardFieldNames(),
                         showAge: this.getSetting('showCardAge') ? this.getSetting('cardAgeThreshold') : -1,
-                        showBlockedReason: true
+                        showBlockedReason: true,
+                        shouldUseRankHelperFilters: true
                     },
                     listeners: {
                         filter: this._onBoardFilter,
