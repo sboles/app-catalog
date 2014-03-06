@@ -1,50 +1,55 @@
-.iterationtrackingboard .header {
-    line-height: normal;
-    padding: 5px;
+/* .iterationtrackingboard .header { */
+/*     line-height: normal; */
+/*     padding: 5px; */
+/* } */
+/*  */
+/* .iterationtrackingboard .header .add-new { */
+/*     float: left; */
+/* } */
+/*  */
+/* .iterationtrackingboard .header .add-new .new { */
+/*     margin-left: 0; */
+/* } */
+/*  */
+/* .iterationtrackingboard .header .rui-triggerfield { */
+/*     margin-bottom: 5px; */
+/* } */
+/*  */
+/* .iterationtrackingboard .blank-slate-msg .x4-panel-body { */
+/*     clear: both; */
+/*     padding-top: 20px; */
+/*     text-align: center; */
+/* } */
+/*  */
+/* .iterationtrackingboard .gridboard-filter-control { */
+/*     height: 22px; */
+/*     margin: 3px 0px 0px 5px; */
+/* } */
+/*  */
+/* .iterationtrackingboard .x4-grid-row-summary { */
+/*     background-color: #F6F6F6; */
+/* } */
+/*  */
+/* .iterationtrackingboard .x4-grid-row-summary .x4-grid-cell-inner { */
+/*     margin: 0 1px; */
+/*     padding: 0; */
+/* } */
+/*  */
+/* .iterationtrackingboard .x4-grid-row-summary .rollup { */
+/*     background-color: #D6D6D6; */
+/*     display: inline-block; */
+/*     font-family: NotoSans, Helvetica, Arial; */
+/*     font-size: 12px; */
+/*     line-height: 21px; */
+/*     text-align: center; */
+/*     width: 100%; */
+/* } */
+/*  */
+/* .settings-no-grid { */
+/*     padding: 10px; */
+/* } */
+/*  */
+.x-grid-cell-inner {
+  white-space: normal;
 }
 
-.iterationtrackingboard .header .add-new {
-    float: left;
-}
-
-.iterationtrackingboard .header .add-new .new {
-    margin-left: 0;
-}
-
-.iterationtrackingboard .header .rui-triggerfield {
-    margin-bottom: 5px;
-}
-
-.iterationtrackingboard .blank-slate-msg .x4-panel-body {
-    clear: both;
-    padding-top: 20px;
-    text-align: center;
-}
-
-.iterationtrackingboard .gridboard-filter-control {
-    height: 22px;
-    margin: 3px 0px 0px 5px;
-}
-
-.iterationtrackingboard .x4-grid-row-summary {
-    background-color: #F6F6F6;
-}
-
-.iterationtrackingboard .x4-grid-row-summary .x4-grid-cell-inner {
-    margin: 0 1px;
-    padding: 0;
-}
-
-.iterationtrackingboard .x4-grid-row-summary .rollup {
-    background-color: #D6D6D6;
-    display: inline-block;
-    font-family: NotoSans, Helvetica, Arial;
-    font-size: 12px;
-    line-height: 21px;
-    text-align: center;
-    width: 100%;
-}
-
-.settings-no-grid {
-    padding: 10px;
-}

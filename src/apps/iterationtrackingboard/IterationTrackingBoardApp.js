@@ -6,7 +6,7 @@
      * The Iteration Tracking Board can be used to visualize and manage your User Stories and Defects within an Iteration.
      */
     Ext.define('Rally.apps.iterationtrackingboard.IterationTrackingBoardApp', {
-        extend: 'Rally.app.TimeboxScopedApp',
+        extend: 'Rally.app.App',
         requires: [
             'Rally.data.ModelFactory',
             'Rally.data.Ranker',
@@ -73,15 +73,17 @@
         },
 
         launch: function() {
+            this.getContext().isFeatureEnabled = function() { return true; };
             this.showGridSettings = this.getContext().isFeatureEnabled('ITERATION_TRACKING_BOARD_GRID_TOGGLE');
             this.callParent(arguments);
+            this.onScopeChange();
         },
 
         _addGridBoard: function(compositeModel, treeGridModel) {
-            var plugins = ['rallygridboardaddnew'],
+            var plugins = [],// ['rallygridboardaddnew'],
                 context = this.getContext();
 
-            if (context.isFeatureEnabled('F4359_FILTER')) {
+            if (false) {//context.isFeatureEnabled('F4359_FILTER')) {
                 plugins.push({
                     ptype: 'rallygridboardfiltercontrol',
                     filterControlConfig: {
@@ -108,23 +110,23 @@
                     }
                 });
             } else {
-                plugins.push('rallygridboardownerfilter');
+                // plugins.push('rallygridboardownerfilter');
             }
 
-            if (context.isFeatureEnabled('ITERATION_TRACKING_BOARD_GRID_TOGGLE')) {
-                plugins.push('rallygridboardtoggleable');
-            }
+            // if (context.isFeatureEnabled('ITERATION_TRACKING_BOARD_GRID_TOGGLE')) {
+            //     plugins.push('rallygridboardtoggleable');
+            // }
 
-            plugins = plugins.concat([{
-                    ptype: 'rallygridboardfilterinfo',
-                    isGloballyScoped: Ext.isEmpty(this.getSetting('project')) ? true : false,
-                    stateId: 'iteration-tracking-owner-filter-' + this.getAppId()
-                },
-                {
-                    ptype: 'rallygridboardfieldpicker',
-                    gridFieldBlackList: ['DisplayColor']
-                }
-            ]);
+            // plugins = plugins.concat([{
+            //         ptype: 'rallygridboardfilterinfo',
+            //         isGloballyScoped: Ext.isEmpty(this.getSetting('project')) ? true : false,
+            //         stateId: 'iteration-tracking-owner-filter-' + this.getAppId()
+            //     },
+            //     {
+            //         ptype: 'rallygridboardfieldpicker',
+            //         gridFieldBlackList: ['DisplayColor']
+            //     }
+            // ]);
 
             if (context.isFeatureEnabled('SHOW_ARTIFACT_CHOOSER_ON_ITERATION_BOARDS') && !context.isFeatureEnabled('F4359_FILTER')) {
                 plugins.push({
@@ -142,47 +144,47 @@
 
             this.remove('gridBoard');
 
-            this.gridboard = this.add({
-                itemId: 'gridBoard',
-                xtype: 'rallygridboard',
-                stateId: 'iterationtracking-gridboard',
-                context: context,
-                plugins: this.plugins,
-                modelNames: this.modelNames,
-                allModelNames: context.isFeatureEnabled('F2903_USE_ITERATION_TREE_GRID') ? this.allModelNames : null,
-                cardBoardConfig: {
-                    serverSideFiltering: context.isFeatureEnabled('F4359_FILTER'),
-                    columnConfig: {
-                        additionalFetchFields: ['PortfolioItem'],
-                        plugins: [{
-                            ptype: 'rallycolumnpolicy',
-                            app: this
-                        }]
-                    },
-                    cardConfig: {
-                        fields: this.getCardFieldNames(),
-                        showAge: this.getSetting('showCardAge') ? this.getSetting('cardAgeThreshold') : -1,
-                        showBlockedReason: true
-                    },
-                    listeners: {
-                        filter: this._onBoardFilter,
-                        filtercomplete: this._onBoardFilterComplete
-                    }
-                },
-                gridConfig: gridConfig,
-                addNewPluginConfig: {
-                    style: {
-                        'float': 'left'
-                    }
-                },
-                listeners: {
-                    load: this._onLoad,
-                    toggle: this._publishContentUpdated,
-                    recordupdate: this._publishContentUpdatedNoDashboardLayout,
-                    recordcreate: this._publishContentUpdatedNoDashboardLayout,
-                    scope: this
-                }
-            });
+            this.gridboard = this.add(gridConfig);
+            //     itemId: 'gridBoard',
+            //     xtype: 'rallygridboard',
+            //     stateId: 'iterationtracking-gridboard',
+            //     context: context,
+            //     plugins: this.plugins,
+            //     modelNames: this.modelNames,
+            //     allModelNames: context.isFeatureEnabled('F2903_USE_ITERATION_TREE_GRID') ? this.allModelNames : null,
+            //     cardBoardConfig: {
+            //         serverSideFiltering: context.isFeatureEnabled('F4359_FILTER'),
+            //         columnConfig: {
+            //             additionalFetchFields: ['PortfolioItem'],
+            //             plugins: [{
+            //                 ptype: 'rallycolumnpolicy',
+            //                 app: this
+            //             }]
+            //         },
+            //         cardConfig: {
+            //             fields: this.getCardFieldNames(),
+            //             showAge: this.getSetting('showCardAge') ? this.getSetting('cardAgeThreshold') : -1,
+            //             showBlockedReason: true
+            //         },
+            //         listeners: {
+            //             filter: this._onBoardFilter,
+            //             filtercomplete: this._onBoardFilterComplete
+            //         }
+            //     },
+            //     gridConfig: gridConfig,
+            //     addNewPluginConfig: {
+            //         style: {
+            //             'float': 'left'
+            //         }
+            //     },
+            //     listeners: {
+            //         load: this._onLoad,
+            //         toggle: this._publishContentUpdated,
+            //         recordupdate: this._publishContentUpdatedNoDashboardLayout,
+            //         recordcreate: this._publishContentUpdatedNoDashboardLayout,
+            //         scope: this
+            //     }
+            // });
         },
 
         _getGridConfig: function(treeGridModel, columns) {
@@ -195,7 +197,7 @@
                     autoLoad: context.isFeatureEnabled('F4359_FILTER') ? false : true
                 },
                 columnCfgs: this._getGridColumns(),
-                enableBulkEdit: context.isFeatureEnabled('EXT4_GRID_BULK_EDIT'),
+                enableBulkEdit: false,//context.isFeatureEnabled('EXT4_GRID_BULK_EDIT'),
                 stateId: stateId,
                 stateful: true
             };
@@ -216,7 +218,11 @@
                     storeConfig: {
                         parentTypes: parentTypes,
                         childTypes: ['Defect', 'Task', 'TestCase'],
-                        filters: [this.context.getTimeboxScope().getQueryFilter()],
+                        // filters: [this.context.getTimeboxScope().getQueryFilter()],
+                        filters: [{
+                            property: 'Iteration.Name',
+                            value: 'second iteration'
+                        }],
                         sorters: [{
                             property: Rally.data.Ranker.getRankField(treeGridModel),
                             direction: 'ASC'
