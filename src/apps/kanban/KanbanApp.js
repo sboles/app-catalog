@@ -25,13 +25,6 @@
         settingsScope: 'project',
         useTimeboxScope: true,
 
-        items: [
-            {
-                xtype: 'container',
-                itemId: 'bodyContainer'
-            }
-        ],
-
         config: {
             defaultSettings: {
                 groupByField: 'ScheduleState',
@@ -115,7 +108,7 @@
                 cardboardConfig.columns = this._getColumnConfig(columnSetting);
             }
 
-            this.gridboard = this.down('#bodyContainer').add(this._getGridboardConfig(cardboardConfig));
+            this.gridboard = this.add(this._getGridboardConfig(cardboardConfig));
 
             this.cardboard = this.gridboard.getGridOrBoard();
         },
