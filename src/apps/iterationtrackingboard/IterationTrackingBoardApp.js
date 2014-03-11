@@ -145,15 +145,34 @@
 
         _addGrid: function(gridConfig, modelNames){
             var context = this.getContext();
+                columnPlugins = [{
+                    ptype: 'rallycolumnpolicy',
+                    app: this
+                }],
+                columnConfig = {
+                    additionalFetchFields: ['PortfolioItem'],
+                    plugins: columnPlugins
+                };
 
             this.remove('gridBoard');
+
+            if (context.isFeatureEnabled('ITERATION_TRACKING_BOARD_REALTIME_UPDATES')) {
+                //TODO: do we really need the plugin on both the grid and columns?
+                //Methinks just the column, since that has the store.
+                var gridConfigPlugins = gridConfig.plugins || [];
+                gridConfigPlugins.push('rallyrealtimeupdatelistener');
+                gridConfig.realtimeFilterFn = this._filterRealtimeUpdate;
+
+                columnConfig.realtimeFilterFn = this._filterRealtimeUpdate;
+                columnPlugins.push('rallyrealtimeupdatelistener');
+            }
 
             this.gridboard = this.add({
                 itemId: 'gridBoard',
                 xtype: 'rallygridboard',
                 stateId: 'iterationtracking-gridboard',
                 context: context,
-                plugins: this.gridBoardPlugins,
+                plugins: this.plugins,
                 modelNames: modelNames,
                 cardBoardConfig: {
                     serverSideFiltering: context.isFeatureEnabled('BETA_TRACKING_EXPERIENCE'),
@@ -170,7 +189,9 @@
                         }]
                     },
                     cardConfig: {
-                        showAge: this.getSetting('showCardAge') ? this.getSetting('cardAgeThreshold') : -1
+                        fields: this.getCardFieldNames(),
+                        showAge: this.getSetting('showCardAge') ? this.getSetting('cardAgeThreshold') : -1,
+                        showBlockedReason: true
                     },
                     listeners: {
                         filter: this._onBoardFilter,
