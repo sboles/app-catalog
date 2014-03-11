@@ -23,6 +23,7 @@
             'Rally.ui.gridboard.plugin.GridBoardToggleable',
             'Rally.ui.filter.view.ModelFilter',
             'Rally.ui.filter.view.OwnerFilter',
+            'Rally.ui.filter.view.OwnerPillFilter',
             'Rally.ui.filter.view.TagPillFilter',
             'Rally.app.Message',
             'Rally.apps.iterationtrackingboard.IsLeafHelper',
@@ -89,12 +90,7 @@
                         stateful: true,
                         stateId: context.getScopedStateId('iteration-tracking-filter-button'),
                         items: [
-                            {
-                                xtype: 'rallyownerfilter',
-                                margin: '5 5 5 5',
-                                filterChildren: this.getContext().isFeatureEnabled('S58650_ALLOW_WSAPI_TRAVERSAL_FILTER_FOR_MULTIPLE_TYPES'),
-                                project: this.getContext().getProjectRef()
-                            },
+                            this._createOwnerFilterItem(context),
                             this._createTagFilterItem(context),
                             {
                                 xtype: 'rallymodelfilter',
@@ -189,6 +185,30 @@
                     scope: this
                 }
             });
+        },
+
+        _createOwnerFilterItem: function(context) {
+            var isFeatureEnabled = context.isFeatureEnabled('S58650_ALLOW_WSAPI_TRAVERSAL_FILTER_FOR_MULTIPLE_TYPES'),
+                projectRef = context.getProjectRef();
+
+            if (isFeatureEnabled) {
+                return {
+                    xtype: 'rallyownerpillfilter',
+                    margin: '5 5 5 5',
+                    filterChildren: isFeatureEnabled,
+                    project: projectRef,
+                    showPills: false,
+                    showClear: true
+                }
+            } else {
+                return {
+                    xtype: 'rallyownerfilter',
+                    margin: '5 5 5 5',
+                    filterChildren: false,
+                    project: projectRef
+                }
+            }
+
         },
 
         _createTagFilterItem: function(context) {
