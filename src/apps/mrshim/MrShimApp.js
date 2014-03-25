@@ -7,13 +7,9 @@
         settingsScope: "workspace",
         componentCls: 'mrshim-app',
         config: {},
+        chart:null,
+
         requires: [
-//            'Rally.ui.chart.Chart',
-//            'Rally.apps.charts.cfd.project.ProjectCFDSettings',
-//            'Rally.apps.charts.cfd.project.ProjectCFDCalculator',
-//            'Rally.util.Help',
-//            'Rally.util.Test',
-//            'Rally.apps.charts.Colors'
         ],
         items: [
             {
@@ -27,15 +23,9 @@
             id: 279
         },
 
-//        getSettingsFields: function () {
-//            if (!this.chartSettings) {
-//                this.chartSettings = Ext.create('Rally.apps.charts.cfd.project.ProjectCFDSettings', {
-//                    app: this
-//                });
-//            }
-//            return this.chartSettings.getFields();
-//        },
-//
+        driveChart: function () {
+            this.chart.query();
+        },
 
         launch: function () {
             this.callParent(arguments);
@@ -47,21 +37,32 @@
             });
             var url = "/moosenshim/myfile.js";
 
-            var mrShimOnInit = function(mrShim) {
-                mrShim.suckIt();
-            }
             var onload = function () {
-                mrShimOnInit(MrShim({}));
+                self.chart = MrShim({
+                    el:stupidExt.el.dom,
+                    getSetting:function(n) {
+                        return self.getSetting(n);
+                    },
+                    lbapiUrl: function() {
+                        var context = Rally.environment.getContext().getDataContext();
+                        return Rally.environment.getServer().getLookbackUrl(this.version) + '/service/rally/workspace/' +
+                            Rally.util.Ref.getOidFromRef(context.workspace) + '/artifact/snapshot/query';
+                    },
+                    getVar: function(name) {
+                        return {
+                            "releaseOid":10758565528,
+                            "projectOid":self.getContext().getProject().ObjectID
+                        }[name];
+                    }
+                },jQuery);
+                this.driveChart();
             }
-            var onerror = function () {
-                // do something onerror
-            }
+
+            var onerror = function () {}
             var scope = this;
             Ext.Loader.injectScriptElement(url, onload, onerror, scope);
 
-//            self.down("#mrcontainer").on('render',function() {
-//                self.down("#mrcontainer").dom.innerHTML = "Hello world";
-//            });
+
 //            var projectSetting = this.getSetting("project");
 //
 //            this.down('#header').add(this._buildHelpComponent());
