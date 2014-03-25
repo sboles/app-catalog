@@ -40,8 +40,8 @@
 
 
 
-            var onChartLoaded = function () {
-                self.chart = MrShim({
+            var onChartLoaded = function (myfile) {
+                self.chart = myfile({
                     el:stupidExt.el.dom,
                     getSetting:function(n) {
                         return self.getSetting(n);
@@ -61,12 +61,18 @@
                 self.driveChart();
             }
 
-            var loadChartFile = function(){
-                Ext.Loader.injectScriptElement("/moosenshim/myfile.js", onChartLoaded, function(){}, this);
-            }
 
-            var u = "https://storage.googleapis.com/versions.lumenize.com/v0.7.3/Lumenize-min.js";
-            Ext.Loader.injectScriptElement(u, function(){console.log('itworked');loadChartFile();}, function(){console.log('it didnt');}, this);
+            Ext.Loader.injectScriptElement("/moosenshim/require-2.1.11-min.js", function() {
+                requirejs.config({
+                    "paths": {
+                        "jquery": "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min"
+                    }
+                });
+                require(["moosenshim/myfile"], function(myfile) {
+                    onChartLoaded(myfile);
+                });
+                onChartLoaded();
+            },function(){},this);
 
 
 //            var projectSetting = this.getSetting("project");
