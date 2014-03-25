@@ -27,17 +27,20 @@
             this.chart.query();
         },
 
+
         launch: function () {
-            this.callParent(arguments);
             var self = this;
+            this.callParent(arguments);
+
+
+
+
 
             var stupidExt = this.down("#mrcontainer")
-            this.on('afterRender', function() {
-                stupidExt.el.dom.innerHTML = "Hello world";
-            });
-            var url = "/moosenshim/myfile.js";
 
-            var onload = function () {
+
+
+            var onChartLoaded = function () {
                 self.chart = MrShim({
                     el:stupidExt.el.dom,
                     getSetting:function(n) {
@@ -55,12 +58,15 @@
                         }[name];
                     }
                 },jQuery);
-                this.driveChart();
+                self.driveChart();
             }
 
-            var onerror = function () {}
-            var scope = this;
-            Ext.Loader.injectScriptElement(url, onload, onerror, scope);
+            var loadChartFile = function(){
+                Ext.Loader.injectScriptElement("/moosenshim/myfile.js", onChartLoaded, function(){}, this);
+            }
+
+            var u = "https://storage.googleapis.com/versions.lumenize.com/v0.7.3/Lumenize-min.js";
+            Ext.Loader.injectScriptElement(u, function(){console.log('itworked');loadChartFile();}, function(){console.log('it didnt');}, this);
 
 
 //            var projectSetting = this.getSetting("project");
