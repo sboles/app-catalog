@@ -30,7 +30,7 @@ define(["is!hasHighcharts?highcharts-shim:highcharts", "moosenshim/lumenize-0.7.
                 this.chart = new hc.Chart({
                     chart: {
                         renderTo: this.api().el().id,
-                        type: 'line'
+                        type: 'column'
                     },
                     xAxis: {
                         tickWidth: 0,
