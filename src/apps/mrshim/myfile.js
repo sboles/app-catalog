@@ -1,7 +1,5 @@
-define(["moosenshim/lumenize-0.7.3-shim","jquery"], function(lumenize, $) {
-
-
-        var response = {
+define(["is!hasHighcharts?highcharts-shim:highcharts", "moosenshim/lumenize-0.7.3-shim","jquery"], function(hc,lz,jq) {
+        return {
             canRemote : false,
             onProjectChanged : function(newProjectOid) {},
             onReleaseChanged : function(newReleaseOid) {},
@@ -27,7 +25,9 @@ define(["moosenshim/lumenize-0.7.3-shim","jquery"], function(lumenize, $) {
              */
             _buildChart: function() {
                 var self = this;
-                this.chart = new Highcharts.Chart({
+                var elId = this.api().el().id;
+                jq("#" + elId).html("Creating chart...");
+                this.chart = new hc.Chart({
                     chart: {
                         renderTo: this.api().el().id,
                         type: 'bar'
@@ -83,13 +83,11 @@ define(["moosenshim/lumenize-0.7.3-shim","jquery"], function(lumenize, $) {
 
 
                 var data = JSON.stringify(query, undefined, 2);
-                jQuery.ajax({
+                jq.ajax({
                     url:this.api().lbapiUrl(),
                     data: data,
                     error: function (x) { console.log(x); },
                     success: function(data, textStatus, jqXHR) {
-                        console.log(data);
-                        console.log(textStatus);
                         self.transform(data);
                     },
                     contentType: "application/json",
@@ -108,7 +106,7 @@ define(["moosenshim/lumenize-0.7.3-shim","jquery"], function(lumenize, $) {
                     trackLastValueForTheseFields: ['_ValidTo', 'ScheduleState']
                 }
 
-                var tisc = new lumenize.TimeInStateCalculator(config)
+                var tisc = new lz.TimeInStateCalculator(config)
                 tisc.addSnapshots(data.Results, '2012-01-05T00:00:00.000Z', '2014-01-05T00:00:00.000Z')
 
                 this.visualize(_.map(tisc.getResults(), function(v) {
@@ -119,7 +117,7 @@ define(["moosenshim/lumenize-0.7.3-shim","jquery"], function(lumenize, $) {
             visualize : function(data) {
                 var self = this;
                 this.chart.xAxis[0].setTitle({text:"Schedule State"});
-                $.each(data, function(i,x) {
+                jq.each(data, function(i,x) {
                     self.chart.addSeries(x);
                 });
                 this._updateTitles();
@@ -130,15 +128,6 @@ define(["moosenshim/lumenize-0.7.3-shim","jquery"], function(lumenize, $) {
                 this.chart.yAxis[0].setTitle({text:"Yep"});
             }
         }
-
-        if (!window.Highcharts) {
-            require(["highcharts"],function(){
-                return response;
-            });
-        } else {
-            return response;
-        }
-
     }
 );
 

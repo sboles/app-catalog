@@ -75,7 +75,11 @@
                 requirejs.config({
                     "paths": {
                         "jquery": "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min",
-                        "highcharts": "/moosenshim/highcharts-3.0.10"
+                        "highcharts": "/moosenshim/highcharts-3.0.10",
+                        "highcharts-shim": "/moosenshim/highcharts-shim",
+                        "is": "/moosenshim/is",
+                        "is-api": "/moosenshim/is-api",
+                        "hasHighcharts": "/moosenshim/hasHighcharts"
                     },
                     shim: {
                         "highcharts": {
