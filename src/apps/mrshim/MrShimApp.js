@@ -4,7 +4,6 @@
     Ext.define("Rally.apps.mrshim.MrShimApp", {
         name: 'rally-mrshim-app',
         extend: "Rally.app.App",
-        settingsScope: "workspace",
         componentCls: 'mrshim-app',
         config: {},
         chart:null,
@@ -24,8 +23,21 @@
         },
 
 
+        getSettingsFields: function () {
+            var fields = this.callParent(arguments);
+
+
+            fields.push({
+                type: "text",
+                name: "url",
+                label: "URL To Load"
+            });
+
+            return fields;
+        },
 
         launch: function () {
+            window.x = this;
             var self = this;
             this.callParent(arguments);
 
@@ -70,7 +82,9 @@
             }, this);
 
 
+            var toload = this.settings.url;
 
+            window.require = window._require;
             Ext.Loader.injectScriptElement("/moosenshim/require-2.1.11-min.js", function() {
                 requirejs.config({
                     "paths": {
@@ -85,10 +99,17 @@
                         "highcharts": {
                             "exports": "Highcharts",
                             "deps": [ "jquery"]
+                        },
+                        "lumenize-0.7.3-min": {
+                            exports: "require"
                         }
                     }
                 });
-                require(["moosenshim/myfile"], function(mychart) {
+                if (!window._require) {
+                    window._require = require;
+                }
+                console.log("require 1", require);
+                require([toload], function(mychart) {
                     self.chart = mychart.init(shimApi);
                     self.chart.launch();
                 });
