@@ -1,36 +1,90 @@
-define(["moosenshim/lumenize-0.7.3-min","jquery"], function(lumenize,$) {
-        return function(scope) {
-            return {
+define(["moosenshim/lumenize-0.7.3-shim","jquery"], function(lumenize, $) {
+
+
+        var response = {
             canRemote : false,
+            onProjectChanged : function(newProjectOid) {},
+            onReleaseChanged : function(newReleaseOid) {},
+            onResize : function() {
+                console.debug("⚡ onResize");
+            },
+
+            init : function(shimApi) {
+                if (shimApi) {
+                    this.api = function() { return shimApi; }
+                } else {
+                    this.api = function() { throw "init was not called with an api instance"; }
+                    this.api();
+                }
+                // bulid the chart up front
+                this._buildChart();
+                return this;
+            },
+            /**
+             * build the chart up front.  we'll populate the series later, but we want to render 'something'
+             * immediately.
+             * @private
+             */
+            _buildChart: function() {
+                var self = this;
+                this.chart = new Highcharts.Chart({
+                    chart: {
+                        renderTo: this.api().el().id,
+                        type: 'bar'
+                    },
+                    xAxis: {
+                        tickWidth: 0,
+                        labels : {
+                            enabled:false
+                        }
+                    },
+                    yAxis: {
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    tooltip: {
+                        formatter: function() {
+                            return '<b>'+ this.series.name +'</b><br/>'+ this.y;
+                        }
+                    },
+                    plotOptions: {
+                        series: {
+                            stacking: 'normal'
+                        }
+                    }
+                });
+                window.c = this.chart;
+            },
+            launch : function() {
+                this.query();
+            },
             query : function() {
                 var self = this;
-                console.log("MrShim::query");
-
-                var timeFrameUnit = scope.getSetting("timeFrameUnit");
-                console.log("timeFrameUnit", timeFrameUnit);
-
-                var timeFrameQuantity = scope.getSetting("timeFrameQuantity");
-                console.log("timeFrameQuantity", timeFrameQuantity);
-
-
+//                console.debug("MrShim::query");
+//
+//                var timeFrameUnit = this.api().getSetting("timeFrameUnit");
+//                console.debug("timeFrameUnit", timeFrameUnit);
+//
+//                var timeFrameQuantity = this.api().getSetting("timeFrameQuantity");
+//                console.debug("timeFrameQuantity", timeFrameQuantity);
                 var query = {
                     find: {
                         _TypeHierarchy: "Defect",
                         State: {$lte: "Closed" },
-                        _ProjectHierarchy: scope.getVar("projectOid"),
-                        Release:  scope.getVar("releaseOid")
+                        _ProjectHierarchy: this.api().getProject(),
+                        Release:  this.api().getRelease()
                     },
                     fields: ["_ValidFrom", "_ValidTo", "ObjectID", "ScheduleState"],
                     hydrate: ["ScheduleState"]
                 }
 
 
-                console.log("Query", scope.lbapiUrl());
-                console.log(query);
                 var data = JSON.stringify(query, undefined, 2);
-                console.log(data);
                 jQuery.ajax({
-                    url:scope.lbapiUrl(),
+                    url:this.api().lbapiUrl(),
                     data: data,
                     error: function (x) { console.log(x); },
                     success: function(data, textStatus, jqXHR) {
@@ -57,65 +111,34 @@ define(["moosenshim/lumenize-0.7.3-min","jquery"], function(lumenize,$) {
                 var tisc = new lumenize.TimeInStateCalculator(config)
                 tisc.addSnapshots(data.Results, '2012-01-05T00:00:00.000Z', '2014-01-05T00:00:00.000Z')
 
-                scope.visualize(_.map(tisc.getResults(), function(v) {
+                this.visualize(_.map(tisc.getResults(), function(v) {
                     return {name: v.ScheduleState,data:[v.ticks]};
                 }));
             },
 
             visualize : function(data) {
-                console.log(data);
-
-                var chart = new Highcharts.Chart({
-                    chart: {
-                        renderTo: scope.el.id,
-                        type: 'bar',
-                        marginRight: 130,
-                        marginBottom: 25
-                    },
-                    title: {
-                        text: 'Monthly Average Temperature',
-                        x: -20 //center
-                    },
-                    subtitle: {
-                        text: 'Source: WorldClimate.com',
-                        x: -20
-                    },
-                    /*xAxis: {
-                     categories: _.keys(data)
-                     },*/
-                    yAxis: {
-                        title: {
-                            text: 'Defect State Counts'
-                        },
-                        plotLines: [{
-                            value: 0,
-                            width: 1,
-                            color: '#808080'
-                        }]
-                    },
-                    tooltip: {
-                        formatter: function() {
-                            return '<b>'+ this.series.name +'</b><br/>'+ this.y;
-                        }
-                    },
-                    legend: {
-                        layout: 'vertical',
-                        align: 'right',
-                        verticalAlign: 'top',
-                        x: -10,
-                        y: 100,
-                        borderWidth: 0
-                    },
-                    plotOptions: {
-                        series: {
-                            stacking: 'normal'
-                        }
-                    },
-                    series: data
+                var self = this;
+                this.chart.xAxis[0].setTitle({text:"Schedule State"});
+                $.each(data, function(i,x) {
+                    self.chart.addSeries(x);
                 });
-            }
+                this._updateTitles();
+            },
+
+            _updateTitles: function() {
+                this.chart.setTitle({text:"The Title"}, {text:"The SubTitle"});
+                this.chart.yAxis[0].setTitle({text:"Yep"});
             }
         }
+
+        if (!window.Highcharts) {
+            require(["highcharts"],function(){
+                return response;
+            });
+        } else {
+            return response;
+        }
+
     }
 );
 
