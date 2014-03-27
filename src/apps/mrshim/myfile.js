@@ -1,4 +1,4 @@
-define(["is!hasHighcharts?highcharts-shim:highcharts", "moosenshim/lumenize-0.7.3-shim","jquery"], function(hc,lz,jq) {
+define(["is!hasHighcharts?highcharts-shim:highcharts", "lumenize-0.7.3-shim","jquery","underscore"], function(hc,lz,jq,_) {
         return {
             canRemote : false,
             onProjectChanged : function(newProjectOid) {},

@@ -93,7 +93,10 @@
                         "highcharts-shim": "/moosenshim/highcharts-shim",
                         "is": "/moosenshim/is",
                         "is-api": "/moosenshim/is-api",
-                        "hasHighcharts": "/moosenshim/hasHighcharts"
+                        "hasHighcharts": "/moosenshim/hasHighcharts",
+                        "lumenize-0.7.3-shim":"/moosenshim/lumenize-0.7.3-shim",
+                        "lumenize-0.7.3-min":"/moosenshim/lumenize-0.7.3-min",
+                        "underscore": "/moosenshim/underscore"
                     },
                     shim: {
                         "highcharts": {
