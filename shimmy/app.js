@@ -4,16 +4,10 @@
 
 var express  = require('express'),
 	path     = require('path'),
-	mongoose = require('mongoose'),
 	config   = require('./config'),
 	routes   = require('./routes');
 
 
-
-mongoose.connect(config.database.url);
-mongoose.connection.on('error', function () {
-  console.log('mongodb connection error');
-});
 
 var app = express();
 
@@ -22,6 +16,9 @@ function apiProxy(pattern, host, port, username, password) {
 	var httpProxy = require('http-proxy');
 	var base64Encode = require('base64').encode;
 	var Buffer = require('buffer').Buffer;
+    var scheme = (443 === port) ? 'https' : 'http';
+    var target = scheme + '://' + host + ':' + port;
+    console.log('Using ' + scheme + ' scheme for proxy');
 
 	return function(req,res,next) {
 		if (req.url.match(pattern)) {
@@ -29,12 +26,14 @@ function apiProxy(pattern, host, port, username, password) {
 			var userPass = base64Encode(new Buffer(username + ':' + password));
 			req.headers.authorization = 'Basic ' + userPass;
 
-
+            req.headers.host = host;
+            req.headers.origin = target;
+            req.headers.referer = target;
+            console.log(JSON.stringify(req.headers, null, 2));
+            
 			var proxy = httpProxy.createProxyServer({
-				target:'http://' + host + ':' + port,
-				headers: {
-					host: 'localhost'
-				}
+				target: target,
+                https: true
 			});
 			proxy.on('end', function(req) {
 			  console.log('The request was proxied for ' + req.url);
@@ -59,7 +58,6 @@ var argv = require('optimist')
 
 
 var applicationPort = app.get('port') || 3000;
-console.log(argv);
 
 console.log('==================================================================');
 console.log(' Proxy Configuration');
@@ -87,7 +85,7 @@ app.use(express.session({ secret: 'your secret code' }));
 app.use(app.router);
 
 var mountpoint = path.join(__dirname, '../src/apps');
-console.log('Mountpoint', mountpoint);
+console.log('Using Mountpoint ', mountpoint);
 app.use(express.static(mountpoint));
 app.use(express.static(path.join(__dirname, 'public')));
 

@@ -1,6 +1,6 @@
 (function ($) {
 	$(document).ready(function () {
-		var chart = null;
+		var engine = null;
 
 		requirejs.config({
 			'paths': {
@@ -12,7 +12,10 @@
 				'hasHighcharts': '/mrshim/hasHighcharts',
 				'lumenize-0.7.3-shim':'/mrshim/lumenize-0.7.3-shim',
 				'lumenize-0.7.3-min':'/mrshim/lumenize-0.7.3-min',
-				'underscore':'/mrshim/underscore'
+				'underscore':'/mrshim/underscore',
+                'underscore-shim': '/mrshim/underscore-shim',
+                'hasUnderscore' : '/mrshim/hasUnderscore',
+                'engine': '/mrshim/engine'
 			},
 			shim: {
 				'highcharts': {
@@ -32,8 +35,8 @@
 				  var el = $('#mrcontainer').get(0);
 				  return el;
 			},
-			getSetting:function(n) {
-				  return n + 'value';
+			getPreference:function(n) {
+				  return n + ' value';
 			},
 			lbapiUrl: function() {
 				var context = '/proxy/analytics/v2.0/service/rally/workspace/41529001/artifact/snapshot/query.js';
@@ -44,9 +47,20 @@
 			toggleEnabled : function(name) { return name || false; }
 		};
 
-		require(['/mrshim/myfile.js'], function(mychart) {
-			chart = mychart.init(shimApi);
-			chart.launch();
-		});
+        var toload = '/mrshim/myfile.js';
+        var self = this;
+        require(['engine'],function(engineFactory) {
+            engineFactory(toload, function(loadedEngine){
+                self.engine = loadedEngine;
+                self.engine.init(shimApi);
+                // self.appPrefs = self.engine.prefs();
+                // _.each(self.appPrefs, function(pref) {
+                //     if (pref.default) {
+                //         self.defaultSettings[pref.name] = pref.default;
+                //     }
+                // });
+                self.engine.launch();
+            });
+        });
 	});
 })(jQuery);

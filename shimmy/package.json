@@ -4,10 +4,10 @@
   "dependencies": {
     "express": "~3.4.8",
     "jade": "~1.1.5",
-    "mongoose": "~3.8.7",
     "http-proxy": "~1.0.3",
     "underscore": "~1.6.0",
-    "optimist": "~0.6.1"
+    "optimist": "~0.6.1",
+    "base64": "^2.1.0"
   },
   "devDependencies": {
     "grunt": "~0.4.2",

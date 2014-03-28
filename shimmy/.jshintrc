@@ -21,6 +21,7 @@
   "-W117": false,
   "-W015": false,
   "-W013": false,
+  "-W098": false,
   "globals": {
     "jQuery": true
   }
