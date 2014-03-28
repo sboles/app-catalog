@@ -7,17 +7,7 @@ define(["is!hasHighcharts?highcharts-shim:highcharts", "lumenize-0.7.3-shim","jq
                 console.debug("⚡ onResize");
             },
 
-            init : function(shimApi) {
-                if (shimApi) {
-                    this.api = function() { return shimApi; }
-                } else {
-                    this.api = function() { throw "init was not called with an api instance"; }
-                    this.api();
-                }
-                // bulid the chart up front
-                this._buildChart();
-                return this;
-            },
+
 
             prefs: function() {
                 return [
@@ -35,7 +25,7 @@ define(["is!hasHighcharts?highcharts-shim:highcharts", "lumenize-0.7.3-shim","jq
              * immediately.
              * @private
              */
-            _buildChart: function() {
+            init: function() {
                 var self = this;
                 var elId = this.api().el().id;
                 jq("#" + elId).html("Creating chart...");
@@ -70,10 +60,8 @@ define(["is!hasHighcharts?highcharts-shim:highcharts", "lumenize-0.7.3-shim","jq
                 });
                 window.c = this.chart;
             },
-            launch : function() {
-                this.query();
-            },
-            query : function() {
+
+            query : function(success,error) {
                 var self = this;
 //                console.debug("MrShim::query");
 //
@@ -98,17 +86,15 @@ define(["is!hasHighcharts?highcharts-shim:highcharts", "lumenize-0.7.3-shim","jq
                 jq.ajax({
                     url:this.api().lbapiUrl(),
                     data: data,
-                    error: function (x) { console.log(x); },
-                    success: function(data, textStatus, jqXHR) {
-                        self.transform(data);
-                    },
+                    error: error,
+                    success: success,
                     contentType: "application/json",
                     type: "POST",
                     dataType: "json"
                 });
             },
 
-            transform : function(data) {
+            transform : function(data, done) {
                 config =  {
                     granularity: "day",
                     validFromField: '_ValidFrom',
@@ -121,7 +107,7 @@ define(["is!hasHighcharts?highcharts-shim:highcharts", "lumenize-0.7.3-shim","jq
                 var tisc = new lz.TimeInStateCalculator(config)
                 tisc.addSnapshots(data.Results, '2012-01-05T00:00:00.000Z', '2014-01-05T00:00:00.000Z')
 
-                this.visualize(_.map(tisc.getResults(), function(v) {
+                done(_.map(tisc.getResults(), function(v) {
                     return {name: v.ScheduleState,data:[v.ticks]};
                 }));
             },

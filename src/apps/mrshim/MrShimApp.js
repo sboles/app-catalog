@@ -136,7 +136,8 @@
                         "lumenize-0.7.3-min":"/moosenshim/lumenize-0.7.3-min",
                         "underscore": "/moosenshim/underscore",
                         "underscore-shim": "/moosenshim/underscore-shim",
-                        "hasUnderscore" : "/moosenshim/hasUnderscore"
+                        "hasUnderscore" : "/moosenshim/hasUnderscore",
+                        "engine": "/moosenshim/engine"
                     },
                     shim: {
                         "highcharts": {
@@ -151,18 +152,20 @@
                 if (!window._require) {
                     window._require = require;
                 }
-                console.log("require 1", require);
-                require([toload], function(mychart) {
-                    self.chart = mychart.init(shimApi);
-                    self.appPrefs = mychart.prefs();
-
-                    _.each(self.appPrefs, function(pref) {
-                        if (pref.default) {
-                            self.defaultSettings[pref.name] = pref.default;
-                        }
+                require(['engine'],function(engineFactory) {
+                    engineFactory(toload, function(loadedEngine){
+                        self.engine = loadedEngine;
+                        self.engine.init(shimApi);
+                        self.appPrefs = self.engine.prefs();
+                        _.each(self.appPrefs, function(pref) {
+                            if (pref.default) {
+                                self.defaultSettings[pref.name] = pref.default;
+                            }
+                        });
+                        self.engine.launch();
                     });
-                    self.chart.launch();
                 });
+
             },function(){},this);
 
 
