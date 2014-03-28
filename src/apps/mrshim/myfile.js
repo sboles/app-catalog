@@ -1,4 +1,4 @@
-define(["is!hasHighcharts?highcharts-shim:highcharts", "lumenize-0.7.3-shim","jquery","underscore"], function(hc,lz,jq,_) {
+define(["is!hasHighcharts?highcharts-shim:highcharts", "lumenize-0.7.3-shim","jquery", "is!hasUnderscore?underscore-shim:underscore"], function(hc,lz,jq, _) {
         return {
             canRemote : false,
             onProjectChanged : function(newProjectOid) {},
@@ -21,7 +21,12 @@ define(["is!hasHighcharts?highcharts-shim:highcharts", "lumenize-0.7.3-shim","jq
 
             prefs: function() {
                 return [
-                    {type: 'text', name: 'bozo', label: 'Enter something here, bozo.', default: 'abc123!!'}
+                    {type: 'text', name: 'chart-title', label: 'Chart Title', default: 'Chart Title'},
+                    {type: 'text', name: 'chart-subtitle', label: 'Chart Sub-Title', default: "Sub Title"},
+                    {type: 'combobox', name: 'color', label: 'Color Fool', default: 'red', values:[
+                        {label:'Red', value: 'red'},
+                        {label:'Blue', value: 'blue'}
+                    ]}
                 ];
             },
 
@@ -131,8 +136,12 @@ define(["is!hasHighcharts?highcharts-shim:highcharts", "lumenize-0.7.3-shim","jq
             },
 
             _updateTitles: function() {
-                this.chart.setTitle({text:"The Title"}, {text:"The SubTitle"});
-                this.chart.yAxis[0].setTitle({text:"Yep"});
+                this.chart.setTitle(
+                    {text: this.api().getPreference('chart-title'),
+                        style: { color: this.api().getPreference('color') }},
+                    {text: this.api().getPreference('chart-subtitle')}
+                );
+                this.chart.yAxis[0].setTitle({text:'Yep'});
             }
         }
     }

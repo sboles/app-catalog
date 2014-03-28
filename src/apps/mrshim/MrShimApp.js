@@ -5,7 +5,11 @@
         name: 'rally-mrshim-app',
         extend: "Rally.app.App",
         componentCls: 'mrshim-app',
-        config: {},
+        config: {
+            defaultSettings: {
+                url: '/moosenshim/myfile.js'
+            }
+        },
         chart:null,
 
         requires: [
@@ -22,10 +26,26 @@
             id: 279
         },
 
+        settingsTransformers: {
+            'combobox': function(original) {
+                return {
+                    xtype: 'rallycombobox',
+                    valueField: 'value',
+                    displayField: 'label',
+                    name: original.name,
+                    store: {
+                        xtype: "store",
+                        fields: [
+                            'label','value'
+                        ],
+                        data: original.values || [{label:'data expected is \'label\' and \'value\'',value:''}]
+                    }
+                };
+            }
+        },
 
         getSettingsFields: function () {
             var fields = this.callParent(arguments);
-
 
             fields.push({
                 type: "text",
@@ -33,11 +53,25 @@
                 label: "URL To Load"
             });
 
-            if (this.appPrefs) {
-                fields = fields.concat(this.appPrefs);
-            }
+            var self = this;
+
+            _.each(this.appPrefs, function(pref) {
+                var p = pref;
+                if (self.settingsTransformers[pref.type]) {
+                    p = self.settingsTransformers[pref.type](pref);
+                }
+                fields.push(p);
+            });
 
             return fields;
+        },
+
+        getDefaultSettings: function() {
+            var defaults = this.callParent(arguments);
+            _.each(this.appPrefs, function(pref) {
+                defaults[pref.name] = pref.default;
+            });
+            return defaults;
         },
 
         launch: function () {
@@ -64,9 +98,6 @@
                     // this evaluation needs to occur delayed
                     return stupidExt.el.dom;
                 },
-                getPreference:function(n) {
-                    return 'no';
-                }
                 lbapiUrl: function() {
                     var context = Rally.environment.getContext().getDataContext();
                     return Rally.environment.getServer().getLookbackUrl(this.version) + '/service/rally/workspace/' +
@@ -74,7 +105,10 @@
                 },
                 getProject: function() { return self.getContext().getProject().ObjectID; },
                 getRelease: function() { return 10758565528; },
-                toggleEnabled : function(name) { return false;}
+                toggleEnabled : function(name) { return false;},
+                getPreference: function(n) {
+                    return self.getSetting(n) || self.defaultSettings[n];
+                }
             }
 
 
@@ -100,7 +134,9 @@
                         "hasHighcharts": "/moosenshim/hasHighcharts",
                         "lumenize-0.7.3-shim":"/moosenshim/lumenize-0.7.3-shim",
                         "lumenize-0.7.3-min":"/moosenshim/lumenize-0.7.3-min",
-                        "underscore": "/moosenshim/underscore"
+                        "underscore": "/moosenshim/underscore",
+                        "underscore-shim": "/moosenshim/underscore-shim",
+                        "hasUnderscore" : "/moosenshim/hasUnderscore"
                     },
                     shim: {
                         "highcharts": {
@@ -119,6 +155,12 @@
                 require([toload], function(mychart) {
                     self.chart = mychart.init(shimApi);
                     self.appPrefs = mychart.prefs();
+
+                    _.each(self.appPrefs, function(pref) {
+                        if (pref.default) {
+                            self.defaultSettings[pref.name] = pref.default;
+                        }
+                    });
                     self.chart.launch();
                 });
             },function(){},this);
