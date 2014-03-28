@@ -3,11 +3,10 @@
  */
 
 var express  = require('express'),
-    path     = require('path'),
-    mongoose = require('mongoose'),
-    config   = require('./config'),
-    routes   = require('./routes');
-var httpProxy = require('http-proxy');
+	path     = require('path'),
+	mongoose = require('mongoose'),
+	config   = require('./config'),
+	routes   = require('./routes');
 
 
 
@@ -19,16 +18,20 @@ mongoose.connection.on('error', function () {
 var app = express();
 
 
-function apiProxy(pattern, host, port) {
+function apiProxy(pattern, host, port, username, password) {
+	var httpProxy = require('http-proxy');
+	var base64Encode = require('base64').encode;
+	var Buffer = require('buffer').Buffer;
 
 	return function(req,res,next) {
-		console.log("CHAIN!!!");
-    	if (req.url.match(pattern)) {
-    		console.log("MATCH");
+		if (req.url.match(pattern)) {
 			req.url = req.url.substring('/proxy'.length);
+			var userPass = base64Encode(new Buffer(username + ':' + password));
+			req.headers.authorization = 'Basic ' + userPass;
+
 
 			var proxy = httpProxy.createProxyServer({
-				target:'http://localhost:80',
+				target:'http://' + host + ':' + port,
 				headers: {
 					host: 'localhost'
 				}
@@ -36,22 +39,43 @@ function apiProxy(pattern, host, port) {
 			proxy.on('end', function(req) {
 			  console.log('The request was proxied for ' + req.url);
 			});
-      		proxy.web(req, res,{}, function(e) {
-      			console.log(e.toString());
-      		});
-      	} else {
-      		next()
-  		}
-	}
+			proxy.web(req, res,{}, function(e) {
+				console.log(e.toString());
+			});
+		} else {
+			next();
+		}
+	};
 }
 
 /**
  * Express configuration.
  */
+var argv = require('optimist')
+	.usage('Usage: $0 --proxyUser [username "rallyuser"] --proxyPassword [password "rallypassword"] --proxyHost [host "localhost"] --proxyPort [number "80"]')
+	.default({ proxyHost : 'localhost', proxyPort : 80, proxyUser : 'rallyuser', proxyPassword: 'rallypassword' })
+    // .demand(['proxyPassword','proxyUser'])
+    .argv;
+
+
+var applicationPort = app.get('port') || 3000;
+console.log(argv);
+
+console.log('==================================================================');
+console.log(' Proxy Configuration');
+console.log('  proxyUser     : ' + argv.proxyUser);
+console.log('  proxyPassword : ' + argv.proxyPassword);
+console.log('  proxyPort     : ' + argv.proxyPort);
+console.log('  proxyHost     : ' + argv.proxyHost);
+console.log(' General Configuration');
+console.log('  application port   : ' + applicationPort);
+console.log('==================================================================');
+
+
 app.set('port', config.server.port);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-app.use(apiProxy(/\/proxy\/.*/, 'localhost',80))
+app.use(apiProxy(/\/proxy\/.*/, argv.proxyHost,argv.proxyPort,argv.proxyUser,argv.proxyPassword));
 app.use(express.compress());
 app.use(express.favicon());
 app.use(express.logger('dev'));
@@ -74,6 +98,6 @@ app.use(express.errorHandler());
 
 routes(app);
 
-app.listen(app.get('port'), function () {
-  console.log('Express server listening on port ' + app.get('port'));
+app.listen(applicationPort, function () {
+  console.log('Express server listening on port ' + applicationPort);
 });

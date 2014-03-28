@@ -1,4 +1,19 @@
 module.exports = ->
+  proxyArgs = [ ]
+
+  if (process.env.RALLY_PROXY_USER)
+    proxyArgs.push '--proxyUser'
+    proxyArgs.push process.env.RALLY_PROXY_USER
+  if (process.env.RALLY_PROXY_PASSWORD)
+    proxyArgs.push '--proxyPassword'
+    proxyArgs.push process.env.RALLY_PROXY_PASSWORD
+  if (process.env.RALLY_PROXY_HOST)
+    proxyArgs.push '--proxyHost'
+    proxyArgs.push process.env.RALLY_PROXY_HOST
+  if (process.env.RALLY_PROXY_PORT)
+    proxyArgs.push '--proxyPort'
+    proxyArgs.push process.env.RALLY_PROXY_PORT
+
   config=
     jshint:
       options:
@@ -31,6 +46,10 @@ module.exports = ->
       dev:
         script: 'app.js'
         options:
+          args : proxyArgs
+          callback: (nodemon) ->
+            nodemon.on 'log', (event) ->
+              console.log('->>' + event.colour)
           nodeArgs: ['--debug']
           cwd: __dirname
           ignore: ['node_modules/', 'public/']

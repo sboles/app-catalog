@@ -6,7 +6,8 @@
     "jade": "~1.1.5",
     "mongoose": "~3.8.7",
     "http-proxy": "~1.0.3",
-    "underscore": "~1.6.0"
+    "underscore": "~1.6.0",
+    "optimist": "~0.6.1"
   },
   "devDependencies": {
     "grunt": "~0.4.2",
