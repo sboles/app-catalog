@@ -18,6 +18,13 @@ define(["is!hasHighcharts?highcharts-shim:highcharts", "lumenize-0.7.3-shim","jq
                 this._buildChart();
                 return this;
             },
+
+            prefs: function() {
+                return [
+                    {type: 'text', name: 'bozo', label: 'Enter something here, bozo.', default: 'abc123!!'}
+                ];
+            },
+
             /**
              * build the chart up front.  we'll populate the series later, but we want to render 'something'
              * immediately.

@@ -33,6 +33,10 @@
                 label: "URL To Load"
             });
 
+            if (this.appPrefs) {
+                fields = fields.concat(this.appPrefs);
+            }
+
             return fields;
         },
 
@@ -60,9 +64,9 @@
                     // this evaluation needs to occur delayed
                     return stupidExt.el.dom;
                 },
-                getSetting:function(n) {
-                    return self.getSetting(n);
-                },
+                getPreference:function(n) {
+                    return 'no';
+                }
                 lbapiUrl: function() {
                     var context = Rally.environment.getContext().getDataContext();
                     return Rally.environment.getServer().getLookbackUrl(this.version) + '/service/rally/workspace/' +
@@ -114,6 +118,7 @@
                 console.log("require 1", require);
                 require([toload], function(mychart) {
                     self.chart = mychart.init(shimApi);
+                    self.appPrefs = mychart.prefs();
                     self.chart.launch();
                 });
             },function(){},this);
