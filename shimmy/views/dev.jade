@@ -1,0 +1,91 @@
+extends layout
+
+block content
+	h1= title
+	div#frolicApp(ng-app='frolicApp', ng-controller='frolicController')
+		div.row
+			div.col-md-4
+				h2 Proxy Info
+				table.table.table-striped
+					tr
+						td user
+						td= frolic.proxyUser
+					tr
+						td password
+						td= frolic.proxyPassword
+					tr
+						td host
+						td= frolic.proxyHost
+					tr
+						td port
+						td= frolic.proxyPort
+
+				h2 Selected Workspace
+				form(role='form')
+					div.form-group.has-error
+						label.control-label(for='workspaceSelect', ng-disabled='freeWorkspaceOid') Workspace
+						select.form-control.has-error(ng-model='selectWorkspaceOid', ng-disabled='freeWorkspaceOid')
+							option(value='1') whatever
+					div.form-group
+						label.control-label(for='workspaceOid') Workspace Oid
+							input.form-control(type='text',ng-model='freeWorkspaceOid')
+
+				h2 Selected Project
+				div.form-group.has-error
+					label.control-label(for='projectSelect', ng-disabled='freeProjectOid') Project
+					select.form-control.has-error(ng-model='selectProjectOid', ng-disabled='freeProjectOid')
+						option(value='1') whatever
+				div.form-group
+					label.control-label(for='projectOid') Project Oid
+						input.form-control(type='text',ng-model='freeProjectOid')
+				div.checkbox
+					label
+						input(type='checkbox',id='scopeUp', ng-model='scopeUp')
+						| Scope Up
+				div.checkbox
+					label
+						input(type='checkbox',id='scopeDown', ng-model='scopeDown')
+						| Scope Down
+
+				h2 WSAPI Mode
+				div.radio
+					label(for='wsapiLocal')
+						input(type='radio',id='wsapiLocal',ng-model='wsapiMode',value='local')
+						| Local
+
+				div.radio
+					label(for='wsapiProxied')
+						input(type='radio',id='wsapiProxied',ng-model='wsapiMode',value='proxied')
+						| Proxied
+
+				h2 LBAPI Mode
+				div.radio
+					label(for='lbapiLocal')
+						input(type='radio',id='lbapiLocal',ng-model='lbapiMode',value='local')
+						| Local
+
+				div.radio
+					label(for='lbapiProxied')
+						input(type='radio',id='lbapiProxied',ng-model='lbapiMode',value='proxied')
+						| Proxied
+			div.col-md-8
+				h2 Chart
+				div#mrcontainer
+				#console.console(ng-controller='consoleController')
+					h2 Console
+					label
+						| filter : 
+						input(type='text',ng-model='messageFilter')
+
+					pre
+						div(ng-repeat='message in messages|filter:messageFilter')
+							{{message.when}} {{message.text}} -
+							pre(ng-show='message.object',style='overflow:auto;max-height:150px')
+								{{message.object}}
+							
+
+					
+block tail-javascript
+	script(src='/js/frolic.js')
+	script(src='/js/frolic-chart.js')
+

@@ -1,17 +1,27 @@
 doctype html
-html
+html(lang="en")
 	head
 		title= title
 		meta(charset='utf-8')
 		meta(http-equiv='X-UA-Compatible', content='IE=edge, chrome=1')
 		meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1')
 		link(rel='stylesheet', href='/vendor/bootstrap/dist/css/bootstrap.min.css')
-		link(rel='stylesheet', href='/css/styles.min.css')
+		meta(name='environment',content=settings.env)
+		if settings.env == 'development'
+			link(rel='stylesheet', href='/css/styles.css')
+		else
+			link(rel='stylesheet', href='/css/styles.min.css')
 		script(src='/vendor/requirejs/require.js')
+		script(src='/vendor/angular/angular.min.js')
+		block head-javascript
 	body
 		.container
-		block content
+			block content
 		if settings.env == 'development'
 			script(src='http://localhost:3006/livereload.js')
-		script(src='/vendor/jquery/dist/jquery.min.js')
-		script(src='/js/main.js')
+			script(src='/vendor/jquery/dist/jquery.js')
+			script(src='/vendor/bootstrap/dist/js/bootstrap.js')
+		else
+			script(src='/vendor/jquery/dist/jquery.min.js')
+			script(src='/vendor/bootstrap/dist/js/bootstrap.min.js')
+		block tail-javascript

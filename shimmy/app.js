@@ -5,7 +5,7 @@
 var express  = require('express'),
 	path     = require('path'),
 	config   = require('./config'),
-	routes   = require('./routes');
+	routes   = require('./routes/routes');
 
 
 
@@ -59,6 +59,12 @@ var argv = require('optimist')
 
 var applicationPort = app.get('port') || 3000;
 
+app.frolic = {};
+app.frolic.proxyUser = argv.proxyUser;
+app.frolic.proxyPassword = argv.proxyPassword;
+app.frolic.proxyPort = argv.proxyPort;
+app.frolic.proxyHost = argv.proxyHost;
+
 console.log('==================================================================');
 console.log(' Proxy Configuration');
 console.log('  proxyUser     : ' + argv.proxyUser);
@@ -69,7 +75,7 @@ console.log(' General Configuration');
 console.log('  application port   : ' + applicationPort);
 console.log('==================================================================');
 
-
+console.log(app);
 app.set('port', config.server.port);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -92,6 +98,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(function (req, res) {
   res.status(404).render('404', {title: 'Not Found :('});
 });
+app.use(function (err, req, res, next) {
+  res.status(500).render('500', {status: err.status || 500,
+      err:err
+  });
+});
+
 app.use(express.errorHandler());
 
 routes(app);

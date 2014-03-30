@@ -6,10 +6,10 @@ define([], function() {
             engineCallback({
                 init : function(shimApi) {
                     if (shimApi) {
-                        mychart.api = function() { return shimApi; }
+                        this.api = mychart.api = function() { return shimApi; }
                     } else {
-                        mychart.api = function() { throw "init was not called with an api instance"; }
-                        mychart.api();
+                        this.api = mychart.api = function() { throw "init was not called with an api instance"; }
+                        this.api();
                     }
                     // bulid the chart up front
                     mychart.init();
@@ -20,14 +20,23 @@ define([], function() {
                     return mychart.prefs();
                 },
 
-                launch:function(shimApi) {
+                launch:function() {
+                    var self = this;
                     var visualize = function(data){
+                        self.api().log('visualizing data');
+                        self.api().log('  calling "visualize"');
                         mychart.visualize(data);
+                        self.api().log('done visualizing data');
                     }
                     var success = function(data) {
+                        self.api().log('transforming data', data);
                         mychart.transform(data, visualize);
+                        self.api().log('done transforming data');
                     }
-                    var error = function (x) { console.log(x); };
+                    var error = function (x) { 
+                        self.api().log("Error", x);
+                    };
+                    this.api().log('running query')
                     mychart.query(success,error);
                 }
             })
