@@ -5,9 +5,6 @@
         extend: 'Rally.ui.cardboard.Column',
         alias: 'widget.planningboardcolumn',
 
-        mixins: {
-            maskable: 'Rally.ui.mask.Maskable'
-        },
         requires: [
             'Rally.apps.roadmapplanningboard.plugin.OrcaColumnDropController',
             'Rally.ui.filter.view.FilterButton',
@@ -41,13 +38,7 @@
                 showDeleteMenuItem: true,
                 showAddChildMenuItem: false,
                 showRankMenuItems: false
-            },
-            /**
-             * @cfg {Boolean} renderCardsWhenReady
-             * If set to true, cards will be rendered to the column one at a time as they become available.
-             * If set to false, cards will wait to be rendered until all are ready.
-             */
-            renderCardsWhenReady: true
+            }
         },
 
         constructor: function (config) {
