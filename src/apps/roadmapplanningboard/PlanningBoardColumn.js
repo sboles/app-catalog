@@ -18,6 +18,9 @@
         config: {
             filterable: false,
             baseQueryFilter: null,
+            enableInfiniteScroll: true,
+            infiniteScrollCardThreshold: 25,
+            cardLimit: 200,
             /**
              * @cfg {Object} Object containing Names and TypePaths of the lowest level portfolio item (eg: 'Feature') and optionally its parent (eg: 'Initiative')
              */
