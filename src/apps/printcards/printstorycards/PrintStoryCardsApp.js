@@ -1,12 +1,12 @@
 (function() {
     var Ext = window.Ext4 || window.Ext;
 
-    Ext.define('Rally.apps.printstorycards.PrintStoryCardsApp', {
+    Ext.define('Rally.apps.printcards.printstorycards.PrintStoryCardsApp', {
         extend: 'Rally.app.TimeboxScopedApp',
         alias: 'widget.printstorycards',
         requires: [
             'Rally.data.wsapi.Store',
-            'Rally.apps.printstorycards.Card',
+            'Rally.apps.printcards.PrintCard',
             'Rally.app.plugin.Print'
         ],
         plugins: [{
@@ -14,19 +14,14 @@
         }],
         componentCls: 'printcards',
         scopeType: 'iteration',
-        comboboxConfig: {
-            itemId: 'box',
-            fieldLabel: 'Select Iteration: ',
-            labelWidth: 100,
-            width: 300
-        },
 
-        items: [
-            {
+        launch: function() {
+            this.add({
                 xtype: 'container',
                 itemId: 'cards'
-            }
-        ],
+            });
+            this.callParent(arguments);
+        },
 
         onScopeChange: function(scope) {
             this.down('#cards').removeAll();
@@ -38,7 +33,7 @@
                 autoLoad: true,
                 model: Ext.identityFn('UserStory'),
                 fetch: ['FormattedID', 'Name', 'Owner', 'Description', 'PlanEstimate'],
-                limit: Infinity,
+                limit: (scope.getRecord()) ? 200 : 50,
                 listeners: {
                     load: this._onStoriesLoaded,
                     scope: this
@@ -50,11 +45,7 @@
         },
 
         _onStoriesLoaded: function(store, records) {
-            Ext.Array.each(records, function(record, idx) {
-                if (record.get('PlanEstimate') === null) {
-                    record.set('PlanEstimate', 'None');
-                }
-
+            _.each(records, function(record, idx) {
                 this.down('#cards').add({
                     xtype: 'printcard',
                     data: record.data
@@ -63,7 +54,7 @@
                 if (idx%4 === 3) {
                     this.down('#cards').add({
                         xtype: 'component',
-                        html: '<div class="pb"></div>'
+                        cls: 'pb'
                     });
                 }
             }, this);

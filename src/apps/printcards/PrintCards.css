@@ -36,7 +36,7 @@
     width: 4.3in;
 }
 
-.printcards .card-title {
+.printcards .name {
     font: 28px ProximaNovaBold, Helvetica, Arial;
     padding-top: 0.5em;
     text-align: center;
@@ -54,14 +54,14 @@
     margin-top: 0.3em;
 }
 
-.printcards .storyID {
+.printcards .formattedid {
     float: left;
     font: 14pt / 1.26 NotoSans, Helvetica, Arial;
     margin-left: 0.25em;
     margin-top: 0.3em;
 }
 
-.printcards .estimate {
+.printcards .planestimate {
     bottom: 0.5em;
     position: absolute;
     right: 0.5em;
