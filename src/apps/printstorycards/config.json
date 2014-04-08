@@ -1,0 +1,13 @@
+{
+   "name": "PrintStoryCards",
+   "className": "Rally.apps.printstorycards.PrintStoryCardsApp",
+   "server": "https://rally1.rallydev.com",
+   "sdk": "x",
+   "javascript": [
+      "Card.js",
+      "PrintStoryCardsApp.js"
+   ],
+   "css": [
+      "PrintCards.css"
+   ]
+}
