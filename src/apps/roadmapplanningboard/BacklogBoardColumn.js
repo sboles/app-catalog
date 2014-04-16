@@ -21,7 +21,13 @@
                 operator: '=',
                 value: 'null'
             },
-            enableAutoPaging: true
+            enableAutoPaging: true,
+            cardLimit: 3
+        },
+
+        initComponent: function() {
+            this.callParent(arguments);
+            this.totalCountOffset = this._getAllPlanFeatures().length;
         },
 
         getColumnIdentifier: function () {

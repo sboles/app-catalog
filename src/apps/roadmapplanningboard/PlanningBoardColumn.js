@@ -278,6 +278,19 @@
                 this.filterButton.removeCls('secondary');
                 this.filterButton.addCls('primary');
             }
+        },
+
+        shouldAutoPageMoreRecords: function() {
+            var recordCount = this.store.getCount();
+            var minDesiredCards = Math.ceil(this.cardLimit * this.autoPageThreshold);
+
+            return this._hasMoreRecords() && recordCount < minDesiredCards;
+        },
+
+        doLoadMoreRecords: function () {
+            this.store.nextPage({
+                addRecords: true
+            });
         }
     });
 })();

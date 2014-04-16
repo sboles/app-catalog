@@ -207,6 +207,12 @@
             });
         },
 
+        isMatchingRecord: function (featureRecord) {
+            return this.planRecord && _.find(this.planRecord.get('features'), function (feature) {
+                return (feature.id === featureRecord.get('_refObjectUUID'));
+            });
+        },
+
         _drawDateRange: function () {
             if (this.dateRange) {
                 this.dateRange.update(this.getDateHeaderTplData());

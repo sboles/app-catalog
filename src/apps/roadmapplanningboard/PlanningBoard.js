@@ -489,11 +489,6 @@
                 dropControllerConfig: {
                     dragDropEnabled: this.isAdmin
                 },
-                isMatchingRecord: function (featureRecord) {
-                    return plan && _.find(plan.get('features'), function (feature) {
-                        return (feature.id === featureRecord.get('_refObjectUUID'));
-                    });
-                },
                 listeners: {
                     deleteplan: this._deleteTimeframePlanningColumn,
                     daterangechange: this._onColumnDateRangeChange,
