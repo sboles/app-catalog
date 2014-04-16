@@ -3,7 +3,7 @@ Ext = window.Ext4 || window.Ext
 describe 'Rally.apps.portfoliokanban.PortfolioKanbanApp', ->
 
   helpers
-    _createApp: (settings) ->
+    _createApp: (settings, hideFilterInfo = "false") ->
       globalContext = Rally.environment.getContext()
       type: Rally.util.Ref.getRelativeUri(@feature._ref)
       context = Ext.create 'Rally.app.Context',
@@ -16,6 +16,10 @@ describe 'Rally.apps.portfoliokanban.PortfolioKanbanApp', ->
       options =
         context: context,
         renderTo: 'testDiv'
+        appContainer:
+          panelDef:
+            panelConfigs:
+              hideFilterOnPortfolioKanban: hideFilterInfo
 
       options.settings = settings if settings?
 
@@ -109,6 +113,11 @@ describe 'Rally.apps.portfoliokanban.PortfolioKanbanApp', ->
   it 'displays filter icon', ->
     @_createApp().then =>
       expect(@app.getEl().down('.filterInfo') instanceof Ext.Element).toBeTruthy()
+
+  it 'does not display a filter icon when panel config "true"', ->
+    @_createApp(null, "true").then =>
+      expect(@app.getEl().down('.filterInfo')).toBeFalsy()
+
 
   it 'shows project setting label if following a specific project scope', ->
     @_createApp(
