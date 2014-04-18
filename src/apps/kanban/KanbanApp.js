@@ -223,8 +223,6 @@
                 listeners: {
                     beforecarddroppedsave: this._onBeforeCardSaved,
                     load: this._onBoardLoad,
-                    filter: this._onBoardFilter,
-                    filtercomplete: this._onBoardFilterComplete,
                     cardupdated: this._publishContentUpdatedNoDashboardLayout,
                     scope: this
                 },
@@ -342,14 +340,6 @@
             this._publishContentUpdated();
             this.setLoading(false);
             this._initializeChosenTypes();
-        },
-
-        _onBoardFilter: function() {
-            this.setLoading(true);
-        },
-
-        _onBoardFilterComplete: function() {
-            this.setLoading(false);
         },
 
         _initializeChosenTypes: function() {

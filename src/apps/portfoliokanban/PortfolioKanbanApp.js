@@ -241,8 +241,7 @@
 
             var columnConfig = {
                 xtype: 'rallycardboardcolumn',
-                cardLimit: 50,
-                drawFooter: Ext.emptyFn,
+                cardLimit: 25,
                 enableWipLimit: true
             };
 
