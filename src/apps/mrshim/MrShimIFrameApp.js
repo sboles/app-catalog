@@ -1,10 +1,10 @@
 (function () {
     var Ext = window.Ext4 || window.Ext;
 
-    Ext.define("Rally.apps.mrshim.MrShimApp", {
-        name: 'rally-mrshim-app',
+    Ext.define("Rally.apps.mrshim.MrShimIFrameApp", {
+        name: 'rally-mrshimiframe-app',
         extend: "Rally.app.App",
-        componentCls: 'mrshim-app',
+        componentCls: 'mrshimiframe-app',
         config: {
             defaultSettings: {
                 url: '/easel/my/myfile.js'
@@ -74,16 +74,20 @@
             return defaults;
         },
 
-        launch: function () {
+        constructIFrame: function() {
+            var ifr = '<iframe width="640" height="480" src="/easel/my/myfile.html"></iframe>';
+            this.down("#mrcontainer").el.dom.innerHTML = ifr;
+            window.t = this;
+
+        },
+
+        render: function () {
             window.x = this;
             var self = this;
             this.callParent(arguments);
 
 
-            // get the element we're going to use as the container (defined above in items)
-            // this .down call is Ext specific
-            var stupidExt = this.down("#mrcontainer");
-
+            this.constructIFrame();
             // create the API that will be passed in (the execution context if you will) to the
             // chart that's loaded
 
@@ -91,7 +95,7 @@
             // feature toggles are an ENVIRONMENT/shim specific thing and are NOT
             // exposed to the chart apps. ??? it seems like maybe chart apps could
             // still make use of toggles.?
-
+            var iframe = this.down('#mrcontainer').el.dom.firstChild;
             // provide port(s) for the chart app to use
             var shimApi = {
                 el: function() {
@@ -103,6 +107,7 @@
                     return Rally.environment.getServer().getLookbackUrl(this.version) + '/service/rally/workspace/' +
                         Rally.util.Ref.getOidFromRef(context.workspace) + '/artifact/snapshot/query';
                 },
+                getWorkspace: function() { return 41529001; },
                 getProject: function() { return self.getContext().getProject().ObjectID; },
                 getRelease: function() { return 10758565528; },
                 toggleEnabled : function(name) { return false;},
@@ -113,6 +118,7 @@
 					console.log(a,b);
 				}
             }
+            iframe.shimApi = shimApi;
 
 
             // example - binding events to the chart app
@@ -125,42 +131,6 @@
 
             var toload = this.settings.url;
 
-            window.require = window._require;
-            Ext.Loader.injectScriptElement("/easel/lib/require-2.1.11-min.js", function() {
-                requirejs.config({
-					baseUrl: '/easel/lib/',
-                    "paths": {
-                        "highcharts": "/moosenshim/highcharts-3.0.10",
-						'jquery': '//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min'
-                    },
-                    shim: {
-                        "highcharts": {
-                            "exports": "Highcharts",
-                            "deps": [ "jquery"]
-                        },
-                        "lumenize-0.7.3-min": {
-                            exports: "require"
-                        }
-                    }
-                });
-                if (!window._require) {
-                    window._require = require;
-                }
-                require(['engine'],function(engineFactory) {
-                    engineFactory(toload, function(loadedEngine){
-                        self.engine = loadedEngine;
-                        self.engine.init(shimApi);
-                        self.appPrefs = self.engine.prefs();
-                        _.each(self.appPrefs, function(pref) {
-                            if (pref['default']) {
-                                self.defaultSettings[pref.name] = pref['default'];
-                            }
-                        });
-                        self.engine.launch();
-                    });
-                });
-
-            },function(){},this);
 
 
         }
