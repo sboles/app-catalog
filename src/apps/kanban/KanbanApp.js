@@ -171,6 +171,7 @@
                         headerTpl: column || 'None'
                     },
                     cardLimit: this.getSetting('pageSize'),
+                    enableInfiniteScroll: this.getContext().isFeatureEnabled('ENABLE_INFINITE_SCROLL_ALL_BOARDS'),
                     listeners: {
                         invalidfilter: {
                             fn: this._onInvalidFilter,

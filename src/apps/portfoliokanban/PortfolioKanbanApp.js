@@ -241,8 +241,8 @@
 
             var columnConfig = {
                 xtype: 'rallycardboardcolumn',
-                cardLimit: 25,
-                enableWipLimit: true
+                enableWipLimit: true,
+                enableInfiniteScroll: this.getContext().isFeatureEnabled('ENABLE_INFINITE_SCROLL_ALL_BOARDS')
             };
 
             var cardConfig = {
