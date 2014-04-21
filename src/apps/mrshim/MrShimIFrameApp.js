@@ -116,7 +116,15 @@
                 },
 				log: function(a,b) {
 					console.log(a,b);
-				}
+				},
+                registerPreferences : function(easelPreferences) {
+                    self.appPrefs = easelPreferences;
+                    _.each(self.appPrefs, function(pref) {
+                        if (pref['default']) {
+                            self.defaultSettings[pref.name] = pref['default'];
+                        }
+                    });
+                }
             }
             iframe.shimApi = shimApi;
 
