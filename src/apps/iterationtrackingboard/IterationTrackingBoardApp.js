@@ -123,14 +123,6 @@
                     ['Parent', 'Tasks', 'Defects', 'Discussion', 'PlanEstimate']
             });
 
-            if (true) {
-                plugins = ['rallyrealtimeupdatelistener'];
-                gridConfig.plugins = gridConfig.plugins ? gridConfig.plugins.concat(plugins) : plugins;
-                gridConfig.realtimeFilterFn = this._filterRealtimeUpdate;
-
-                columnPlugins = columnPlugins.concat(plugins);
-            }
-
             if (context.isFeatureEnabled('SHOW_ARTIFACT_CHOOSER_ON_ITERATION_BOARDS') && !context.isFeatureEnabled('BETA_TRACKING_EXPERIENCE')) {
                 plugins.push({
                     ptype: 'rallygridboardartifacttypechooser',
@@ -143,13 +135,16 @@
             this._addGrid(this._getGridConfig(treeGridModel), this._getGridBoardModelNames(context, compositeModel));
         },
 
+        //Poorly named method. Rename once this is not on a branch.
+        //This method adds the gridboard, which can be displaying either the grid or the board.
         _addGrid: function(gridConfig, modelNames){
-            var context = this.getContext();
+            var context = this.getContext(),
                 columnPlugins = [{
                     ptype: 'rallycolumnpolicy',
                     app: this
                 }],
                 columnConfig = {
+                    xtype: 'iterationtrackingboardcolumn',
                     additionalFetchFields: ['PortfolioItem'],
                     plugins: columnPlugins
                 };
@@ -157,8 +152,6 @@
             this.remove('gridBoard');
 
             if (context.isFeatureEnabled('ITERATION_TRACKING_BOARD_REALTIME_UPDATES')) {
-                //TODO: do we really need the plugin on both the grid and columns?
-                //Methinks just the column, since that has the store.
                 var gridConfigPlugins = gridConfig.plugins || [];
                 gridConfigPlugins.push('rallyrealtimeupdatelistener');
                 gridConfig.realtimeFilterFn = this._filterRealtimeUpdate;
@@ -180,14 +173,7 @@
                         {ptype: 'rallycardboardprinting', pluginId: 'print'},
                         {ptype: 'rallyfixedheadercardboard'}
                     ],
-                    columnConfig: {
-                        xtype: 'iterationtrackingboardcolumn',
-                        additionalFetchFields: ['PortfolioItem'],
-                        plugins: [{
-                            ptype: 'rallycolumnpolicy',
-                            app: this
-                        }]
-                    },
+                    columnConfig: columnConfig,
                     cardConfig: {
                         fields: this.getCardFieldNames(),
                         showAge: this.getSetting('showCardAge') ? this.getSetting('cardAgeThreshold') : -1,
