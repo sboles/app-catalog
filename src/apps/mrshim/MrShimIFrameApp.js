@@ -75,7 +75,7 @@
         },
 
         constructIFrame: function() {
-            var ifr = '<iframe width="640" height="480" src="/easel/my/myfile.html"></iframe>';
+            var ifr = '<iframe width="100%" height="480" src="/easel/my/myfile.html"></iframe>';
             this.down("#mrcontainer").el.dom.innerHTML = ifr;
             window.t = this;
 
