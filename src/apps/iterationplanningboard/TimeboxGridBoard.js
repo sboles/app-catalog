@@ -98,7 +98,7 @@
         _getColumnConfigs: function(timeboxes) {
             // Note: Leave backlog card limit as undefined if infinite scroll is enabled.
             // When removing the infinite scroll toggle, card limit should probably be removed from here completely
-            var backlogCardLimit = undefined;
+            var backlogCardLimit;
 
             if (!this.getContext().isFeatureEnabled('ENABLE_INFINITE_SCROLL_ALL_BOARDS')) {
                 backlogCardLimit = Ext.isIE ? 25 : 100;
