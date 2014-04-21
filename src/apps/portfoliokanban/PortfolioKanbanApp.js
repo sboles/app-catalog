@@ -338,7 +338,6 @@
 
         _gridBoardToggle: function (toggleState, gridOrBoard) {
             this.cardboard = toggleState === 'board' ? gridOrBoard : null;
-            this.setLoading({ id: this.getMaskId() });
             this._renderPolicies();
         },
 
@@ -348,7 +347,6 @@
 
         _onBoardLoad: function (cardboard) {
             this._publishContentUpdated();
-            this.setLoading(false);
             Rally.environment.getMessageBus().publish(Rally.Message.piKanbanBoardReady);
         },
 
