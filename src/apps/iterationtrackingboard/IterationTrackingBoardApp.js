@@ -154,9 +154,7 @@
             if (context.isFeatureEnabled('ITERATION_TRACKING_BOARD_REALTIME_UPDATES')) {
                 var gridConfigPlugins = gridConfig.plugins || [];
                 gridConfigPlugins.push('rallyrealtimeupdatelistener');
-                gridConfig.realtimeFilterFn = this._filterRealtimeUpdate;
 
-                columnConfig.realtimeFilterFn = this._filterRealtimeUpdate;
                 columnPlugins.push('rallyrealtimeupdatelistener');
             }
 
